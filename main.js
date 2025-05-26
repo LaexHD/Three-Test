@@ -1,4 +1,5 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+import { OrbitControls } from './orbitcontrol.js';
 
 
 
@@ -20,7 +21,7 @@ document.body.appendChild(renderer.domElement);
 const geometry = new THREE.BoxGeometry();
 
 const textureLoader = new THREE.TextureLoader();
-const texture = textureLoader.load('https://media.istockphoto.com/id/1640602841/de/foto/textur-der-wand-aus-knorrig-geschliffenen-holzbrettern-als-retro-naturhintergrund.webp?a=1&b=1&s=612x612&w=0&k=20&c=GGkK5hnax4rFgSfCsFvenfR6QgeTlbbo6Y8X2Pobz8o=');
+const texture = textureLoader.load('istockphoto-1640602841-612x612.png');
 
 
 const material = new THREE.MeshBasicMaterial({ map: texture });
