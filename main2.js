@@ -25,7 +25,7 @@ const loader = new GLTFLoader();
 let mixer;
 
 loader.load(
-  './models/man.glb',
+  './Business Man.glb',
   function (gltf) {
     const model = gltf.scene;
     scene.add(model);
