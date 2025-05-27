@@ -1,8 +1,8 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
 import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js';
+import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js';
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xffffff);
 
 // Kamera
 const camera = new THREE.PerspectiveCamera(
@@ -18,6 +18,25 @@ const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.outputEncoding = THREE.sRGBEncoding;
 document.body.appendChild(renderer.domElement);
+
+// OrbitControls
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(0, 1, 0);
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+controls.update();
+
+// Skybox laden
+const cubeTextureLoader = new THREE.CubeTextureLoader();
+const skybox = cubeTextureLoader.load([
+  'posx.jpg',
+  'negx.jpg',
+  'posy.jpg',
+  'negy.jpg',
+  'posz.jpg',
+  'negz.jpg',
+]);
+scene.background = skybox;
 
 // Licht
 const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.2);
@@ -47,7 +66,6 @@ loader.load(
     model.position.set(0, 0, 0);
     scene.add(model);
 
-    // Richtige Zielstruktur für Animation finden
     let animationTarget = model;
     model.traverse((node) => {
       if (node.isSkinnedMesh) {
@@ -55,7 +73,6 @@ loader.load(
       }
     });
 
-    // Animationen starten
     if (gltf.animations && gltf.animations.length > 0) {
       mixer = new THREE.AnimationMixer(animationTarget);
       const action = mixer.clipAction(gltf.animations[0]);
@@ -66,7 +83,6 @@ loader.load(
       console.warn('Keine Animationen im GLB gefunden.');
     }
 
-    // Debug-Ausgabe
     console.log('GLTF Szene:', model);
     console.log('GLTF Animationen:', gltf.animations.map(a => a.name));
   },
@@ -83,6 +99,7 @@ function animate() {
   requestAnimationFrame(animate);
   const delta = clock.getDelta();
   if (mixer) mixer.update(delta);
+  controls.update();
   renderer.render(scene, camera);
 }
 animate();
