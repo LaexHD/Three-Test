@@ -75,7 +75,7 @@ loader.load(
 
     if (gltf.animations && gltf.animations.length > 0) {
       mixer = new THREE.AnimationMixer(animationTarget);
-      const action = mixer.clipAction(gltf.animations[0]);
+      const action = mixer.clipAction(gltf.animations[16]);
       action.play();
 
       console.log('Animation gestartet:', gltf.animations[0].name);
