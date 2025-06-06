@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Meine Three.js Demos</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: 'Segoe UI', sans-serif;
+      background: #000;
+      color: white;
+    }
+
+    #logo {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 10;
+      text-align: left;
+    }
+
+    #logo img {
+      height: 80px;
+    }
+
+    #subtitle {
+      font-size: 0.9rem;
+      color: #aaa;
+      margin-top: 4px;
+    }
+
+    #overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      width: 90vw;
+      max-width: 1200px;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2.4rem;
+      margin-bottom: 2.5rem;
+      color: white;
+    }
+
+    .grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2rem;
+    }
+
+    .demo-card {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid white;
+      border-radius: 16px;
+      overflow: hidden;
+      text-align: center;
+      text-decoration: none;
+      color: white;
+      width: 260px;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .demo-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 12px white;
+    }
+
+    .demo-card img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .demo-card-title {
+      padding: 1rem;
+      font-size: 1.1rem;
+      flex-grow: 1;
+    }
+
+    canvas {
+      display: block;
+    }
+
+    @media (max-width: 600px) {
+      .demo-card {
+        width: 90%;
+      }
+      .demo-card img {
+        height: 120px;
+      }
+      .demo-card-title {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Logo mit Untertitel -->
+  <div id="logo">
+    <img src="SIT_LOGO_C65,Y100_S_K80_300dpi.png" alt="Logo" />
+    <div id="subtitle">AzubiTag 2025</div>
+  </div>
+
+  <!-- Demo Auswahl -->
+  <div id="overlay">
+    <h1>Wähle eine Demo aus</h1>
+    <div class="grid">
+      <a href="Demo-Cube/index.html" class="demo-card">
+        <img src="Cube.png" alt="Demo 1 Vorschau">
+        <span class="demo-card-title">🌌 Demo 1: Cube</span>
+      </a>
+      <a href="Demo-Man/index.html" class="demo-card">
+        <img src="Man.png" alt="Demo 2 Vorschau">
+        <span class="demo-card-title">💧 Demo 2: Man</span>
+      </a>
+      <a href="Demo-FPS/index.html" class="demo-card">
+        <img src="FPS.png" alt="Demo 3 Vorschau">
+        <span class="demo-card-title">🌍 Demo 3: FPS</span>
+      </a>
+      <a href="Demo Third Person/index.html" class="demo-card">
+        <img src="ThirdPerson.png" alt="Demo 4 Vorschau">
+        <span class="demo-card-title">🚀 Third Person</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Three.js Hintergrund -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+  <script>
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    const particlesCount = 1000;
+    const geometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(particlesCount * 3);
+    for (let i = 0; i < particlesCount * 3; i++) {
+      positions[i] = (Math.random() - 0.5) * 100;
+    }
+
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const material = new THREE.PointsMaterial({ color: 0xffffff, size: 0.5 });
+    const particles = new THREE.Points(geometry, material);
+    scene.add(particles);
+
+    camera.position.z = 20;
+
+    function animate() {
+      requestAnimationFrame(animate);
+      particles.rotation.y += 0.001;
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+</body>
+</html>
