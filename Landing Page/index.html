@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Meine Three.js Demos</title>
   <style>
-    * {
+    * 
+   
+    {
       box-sizing: border-box;
     }
 
@@ -14,8 +16,8 @@
       padding: 0;
       overflow: hidden;
       font-family: 'Segoe UI', sans-serif;
-      background: #000;
-      color: white;
+      background: #4fac33; 
+      color: #111; 
     }
 
     #logo {
@@ -27,12 +29,22 @@
     }
 
     #logo img {
-      height: 80px;
+      height: 120px;
     }
+
+    #top-line {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 200px; 
+  background-color: white;
+  z-index: 9999;
+}
 
     #subtitle {
       font-size: 0.9rem;
-      color: #aaa;
+      color: #555;
       margin-top: 4px;
     }
 
@@ -51,7 +63,7 @@
     h1 {
       font-size: 2.4rem;
       margin-bottom: 2.5rem;
-      color: white;
+      color: #222;
     }
 
     .grid {
@@ -62,13 +74,13 @@
     }
 
     .demo-card {
-      background: rgba(255, 255, 255, 0.07);
-      border: 1px solid white;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid #ccc;
       border-radius: 16px;
       overflow: hidden;
       text-align: center;
       text-decoration: none;
-      color: white;
+      color: #111;
       width: 260px;
       transition: transform 0.25s ease, box-shadow 0.25s ease;
       display: flex;
@@ -77,12 +89,12 @@
 
     .demo-card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 0 12px white;
+      box-shadow: 0 0 12px #aaa;
     }
 
     .demo-card img {
       width: 100%;
-      height: 160px;
+      height: 250px;
       object-fit: cover;
       display: block;
     }
@@ -99,28 +111,33 @@
 
     @media (max-width: 600px) {
       .demo-card {
-        width: 90%;
+        width: 100%;
       }
       .demo-card img {
-        height: 120px;
+        height: 180px;
       }
       .demo-card-title {
-        font-size: 1rem;
+        font-size: 2rem;
       }
+
+      
     }
   </style>
 </head>
 <body>
+  
 
   <!-- Logo mit Untertitel -->
   <div id="logo">
     <img src="SIT_LOGO_C65,Y100_S_K80_300dpi.png" alt="Logo" />
     <div id="subtitle">AzubiTag 2025</div>
+    
   </div>
 
   <!-- Demo Auswahl -->
   <div id="overlay">
-    <h1>Wähle eine Demo aus</h1>
+    <h1 style="border: 1px solid #ccc;
+      border-radius: 1px;">Wähle eine Demo aus </h1>
     <div class="grid">
       <a href="Demo-Cube/index.html" class="demo-card">
         <img src="Cube.png" alt="Demo 1 Vorschau">
@@ -142,40 +159,68 @@
   </div>
 
   <!-- Three.js Hintergrund -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-  <script>
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
+  <!-- Three.js Hintergrund -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script>
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setClearColor(0x000000, 0); // transparenter Hintergrund
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
+
+  const particleCount = 200;
+  const particles = [];
+
+  const geometry = new THREE.CircleGeometry(0.5, 16);
+  const material = new THREE.MeshBasicMaterial({
+    color: 0xffffff,
+    transparent: true,
+    opacity: 0.15,
+    depthWrite: false,
+  });
+
+  for (let i = 0; i < particleCount; i++) {
+    const particle = new THREE.Mesh(geometry, material.clone());
+    particle.position.x = (Math.random() - 0.5) * 100;
+    particle.position.y = (Math.random() - 0.5) * 100;
+    particle.position.z = (Math.random() - 0.5) * 100;
+    particle.userData = {
+      speed: 0.02 + Math.random() * 0.03,
+      drift: (Math.random() - 0.5) * 0.01
+    };
+    scene.add(particle);
+    particles.push(particle);
+  }
+
+  camera.position.z = 30;
+
+  function animate() {
+    requestAnimationFrame(animate);
+
+    for (const p of particles) {
+      p.position.y += p.userData.speed;
+      p.position.x += p.userData.drift;
+
+      // Reset nach oben raus
+      if (p.position.y > 50) {
+        p.position.y = -50;
+        p.position.x = (Math.random() - 0.5) * 100;
+        p.position.z = (Math.random() - 0.5) * 100;
+      }
+    }
+
+    renderer.render(scene, camera);
+  }
+
+  animate();
+
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
+  });
+</script>
 
-    const particlesCount = 1000;
-    const geometry = new THREE.BufferGeometry();
-    const positions = new Float32Array(particlesCount * 3);
-    for (let i = 0; i < particlesCount * 3; i++) {
-      positions[i] = (Math.random() - 0.5) * 100;
-    }
-
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    const material = new THREE.PointsMaterial({ color: 0xffffff, size: 0.5 });
-    const particles = new THREE.Points(geometry, material);
-    scene.add(particles);
-
-    camera.position.z = 20;
-
-    function animate() {
-      requestAnimationFrame(animate);
-      particles.rotation.y += 0.001;
-      renderer.render(scene, camera);
-    }
-    animate();
-
-    window.addEventListener('resize', () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-  </script>
 </body>
 </html>
